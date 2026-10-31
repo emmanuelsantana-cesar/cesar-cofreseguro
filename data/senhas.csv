@@ -1,0 +1,11 @@
+﻿servico,usuario,senha,categoria,observacoes
+Google,demo.google@email.com,DEMO_NAO_USAR_001,E-mail,Conta fictícia para demonstração
+GitHub,usuario_demo,DEMO_NAO_USAR_002,Desenvolvimento,Conta fictícia para demonstração
+Microsoft 365,demo.office@email.com,DEMO_NAO_USAR_003,Produtividade,Conta fictícia para demonstração
+Netflix,demo.netflix@email.com,DEMO_NAO_USAR_004,Streaming,Perfil de teste
+Spotify,demo.spotify@email.com,DEMO_NAO_USAR_005,Streaming,Perfil de teste
+Amazon,demo.amazon@email.com,DEMO_NAO_USAR_006,Compras,Conta fictícia para demonstração
+Banco Demo,cliente_demo,DEMO_NAO_USAR_007,Financeiro,Dados totalmente fictícios
+Instagram,@usuario_demo,DEMO_NAO_USAR_008,Rede social,Conta fictícia para demonstração
+Dropbox,demo.dropbox@email.com,DEMO_NAO_USAR_009,Armazenamento,Conta fictícia para demonstração
+Wi-Fi Casa,usuario_wifi,DEMO_NAO_USAR_010,Rede,Substituir pelos dados da rede de teste
