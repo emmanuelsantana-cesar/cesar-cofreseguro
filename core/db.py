@@ -18,6 +18,7 @@ class DB:
 
 
 class Table:
+    ENCODING = 'utf-8-sig'
     def __init__(self, file_path: Path):
         self.file_path = file_path
         self.repr_with = 30
@@ -40,14 +41,23 @@ class Table:
         return self.rows[key]
 
 
-
     def _load_table(self):
-        with open(self.file_path, 'r', encoding='utf-8-sig') as f:
+        with open(self.file_path, 'r', encoding=self.ENCODING) as f:
             header = f.readline()
             content = f.read()
 
-        self.columns = header.split(',')
-        self.rows = [row.split(',') for row in  content.split('\n')]
+        self.columns = header.replace('\n', '').split(',')
+        self.rows = [row.split(',') for row in content.split('\n') if row]
+
+
+    def commit(self):
+        header = [','.join(self.columns)+'\n']
+
+        rows = [','.join(row) for row in self.rows]
+        rows = ['\n'.join(rows)]
+
+        with open(self.file_path, 'w', encoding='utf-8-sig') as f:
+            f.writelines(header + rows)
 
 
 

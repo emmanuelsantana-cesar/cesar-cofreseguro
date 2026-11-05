@@ -1,6 +1,6 @@
 
 from pathlib import Path
-from ext.db import DB
+from core.db import DB
 
 
 root = Path(r'data')
@@ -21,3 +21,8 @@ print(db.senhas[0])
 
 # Acessar um elemento específico da tabela
 print(db.senhas[0][0])
+
+
+
+# Acessar um elemento específico da tabela
+print(db.senhas.columns)
