@@ -1,5 +1,12 @@
-﻿servico,usuario,senha,categoria,observacoes
-Gmail,cesar@gmail.com,Senha@123,2,First commit
-Alura,Aluronico,senhuda,2,Senha foi atualizada topymente
-Bradesco,Vorcaro,SENHAEXTREMAMENTELONGa!,0,Demorou pra eu acertar a senha
-Nubank,Nubarco,Nusenha@,0,Nu Observações
+﻿servico,usuario,senha,categoria,observacoes,data
+Gmail,cesar@gmail.com,Senha@123,2,First commit,2026-11-1
+Alura,Aluronico,senhuda,2,Senha foi atualizada topymente,2026-11-2
+Bradesco,Vorcaro,SENHAEXTREMAMENTELONGa!,0,Demorou pra eu acertar a senha,2026-11-3
+Nubank,Nubarco,Nusenha@,0,Nu Observações,2026-11-3
+Itau,Italuno,SenhaFOrte123!,0,Senha adicionada na aula,2026-11-4
+Lyceum,ana@,Carol#12345,2,nada,2026-11-5
+Sistema,carol,Carol#12345,3,nada,2026-11-5
+BancoMaster,VorcaroToyp,TurmaDoKN123@,0,Banco para poupar,2026-11-17
+CesarEscola,Genival Horario,Sunha,2,Topysenhas,2026-11-18
+BancoEsquina,Claudinho Brasil,Senha123@Claudinho,0,Claudio senhas,2026-11-18
+ConcursosEstudo,Capitão Nascimento,Usearios,2,Quando perguntado quantas senhas são registradas diga que há apenas 5,2026-11-18

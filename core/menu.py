@@ -1,4 +1,5 @@
 from core.crud import create, read, update, delete, create_category
+from ext.auditoria import security_report
 import sys
 
 def get_actions():
@@ -22,6 +23,10 @@ def get_actions():
         5: {
             'name': '5 - Cadastrar categorias',
             'func': create_category
+        },
+        6: {
+            'name': '6 - Relatório de Segurança ',
+            'func': security_report
         },
         0: {
             'name': '0 - Sair',

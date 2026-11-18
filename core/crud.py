@@ -1,12 +1,14 @@
+from datetime import date
+from core.log import logger
 
 def create(db):
+    logger.info("Execução de Create")
     while True:
         servico = input('Digite o nome do serviço ou SAIR para retornar: ')
         if servico.lower() == 'sair':
             return
         if _is_valid_txt(servico):
             break
-        print('Nome inválido, não utilize caracteres especiais: ')
 
     categories = [(idx, row[0]) for idx, row in enumerate(db.categorias.rows)]
     categories_txt = [f'{idx}-{name}' for idx, name in categories]
@@ -26,7 +28,7 @@ def create(db):
         print('Nome inválido, não utilize caracteres especiais')
 
     week_pwds = [value[0] for value in db.seguranca.rows]
-    _pwd_input(week_pwds, int(db.categorias.rows[int(category)][1]))
+    pwd = _pwd_input(week_pwds, int(db.categorias.rows[int(category)][1]))
 
 
     while True:
@@ -35,14 +37,18 @@ def create(db):
             break
         print('Não utilize caracteres especiais')
 
-    row = [servico, usr, pwd, category, obs]
+    data_atual = str(date.today())
+    row = [servico, usr, pwd, category, obs, data_atual]
     db.senhas.rows.append(row)
     db.senhas.commit()
+    print('Operação concluída com sucesso!')
+    logger.info("Create executado com sucesso!")
         
 
 
 
 def read(db):
+    logger.info("Execução de Read")
     servicos = sorted(set([row[0] for row in db.senhas.rows]))
     p = "\nQual servico deseja consultar? \n"
     p += "\n".join([f'{idx}-{servico}' for idx, servico in enumerate(servicos)])
@@ -64,6 +70,7 @@ def read(db):
                 value = value[:2] + '*******'
             print(f'{col+':':15} {value:30}')
         print('')
+    logger.info("Read executado com sucesso!")
 
     while True:
         reveal = input('Deseja revelar as senhas? 1-Sim 2-Não\n')
@@ -72,15 +79,17 @@ def read(db):
         print("Valor inválido\n")
 
     if reveal == '1':
-         for row in pwd_found:
-                for col, value in zip(db.senhas.columns, row):
-                    print(f'{col+':':15} {value:30}')
-                print('')
+        for row in pwd_found:
+            for col, value in zip(db.senhas.columns, row):
+                print(f'{col+':':15} {value:30}')
+            print('')
+        logger.info("Senhas reveladas")
 
 
 
 
 def create_category(db):
+    logger.info("Execução de Criar Nova Categoria")
     try:
         name_col = [row[0] for row in db.categorias.rows]
         while True:
@@ -110,12 +119,14 @@ def create_category(db):
         db.categorias.rows.append(row)
         db.categorias.commit()
         print('Operação concluída com sucesso!')
+        logger.info("Criação de Categoria concluída com sucesso!")
     except (ValueError, TypeError) as error:
         print(f"Erro ao executar a operação: {error}")
 
 
 
 def update(db):
+    logger.info("Execução de Update")
     p = "\nQual senha deseja modificar ou SAIR para retornar? \n"
     p += "\n".join([f'{idx:5} - Serviço: {row[0][:10]:10}  Usuário: {row[1][:20]:20}  Categoria: {db.categorias.rows[int(row[3])][0][:10]:10}  Observações: {row[4]:20}' for idx, row in enumerate(db.senhas.rows)])
     p += '\n'
@@ -158,6 +169,7 @@ def update(db):
         db.senhas.commit()
         
         print('Campo atualizado com sucesso!')
+        logger.info("Update executado com sucesso!")
 
         while True:
             flag_repeat = input('Deseja atualizar outro campo? 1-Sim 2-Não ')
@@ -168,14 +180,16 @@ def update(db):
                 return
 
             print('Valor inválido\n')
+        
 
 
 
 
 def delete(db):
+    logger.info("Execução de Delete")
     try:
         p = "\nQual senha deseja excluir ou SAIR para retornar? \n"
-        p += "\n".join([f'{idx:5} - Serviço: {row[0]:10}  Usuário: {row[1]:20}  Categoria: {db.categorias.rows[int(row[3])][0]:10}  Observações: {row[4]:20}' for idx, row in enumerate(db.senhas.rows)])
+        p += "\n".join([f'{idx:5} - Serviço: {row[0][:9]:10}  Usuário: {row[1][:19]:20}  Categoria: {db.categorias.rows[int(row[3])][0]:10}  Observações: {row[4][:19]:20}' for idx, row in enumerate(db.senhas.rows)])
         p += '\n'
         valid_ids = [f'{idx}' for idx in range(len(db.senhas.rows))]
         while True:
@@ -188,9 +202,10 @@ def delete(db):
 
             print("Valor inválido")
 
-        db.categorias.rows.pop(int(row_id))
-        db.categorias.commit()
+        db.senhas.rows.pop(int(row_id))
+        db.senhas.commit()
         print('Senha deletada com sucesso!')
+        logger.info("Delete executado com sucesso!")
 
     except (ValueError, TypeError) as error:
             print(f"Erro ao executar a operação: {error}")
@@ -219,7 +234,7 @@ def _pwd_input(week_pwds, security_lvl:int):
     while True:
         pwd = input('Digite a senha: ')
         if _is_valid_txt(pwd):
-            response = _verify_pwd_strengh(pwd, week_pwds)
+            response = verify_pwd_strengh(pwd, week_pwds)
             if not response['errors']:
                 if  response['security_lvl'] >= security_lvl:
                     break
@@ -234,7 +249,7 @@ def _pwd_input(week_pwds, security_lvl:int):
 
 
 
-def _verify_pwd_strengh(pwd:str, week_pwds):
+def verify_pwd_strengh(pwd:str, week_pwds):
     SPECIAL_CHARS = "!@#$%^&*()"
     errors = []
     improvements = []
@@ -251,7 +266,7 @@ def _verify_pwd_strengh(pwd:str, week_pwds):
         score += 1
 
     elif 8 > len(pwd) >= 6:
-        improvements.append('Senha boa mas você pode aumentar para maior segurança')
+        improvements.append('Senha boa mas você deve aumentar o número de caracteres para maior segurança')
         score += 2
 
     else:
@@ -272,16 +287,20 @@ def _verify_pwd_strengh(pwd:str, week_pwds):
         score += 1
 
 
-    if score <= 2:
-        security_lvl = 1
-    elif score <= 4:
-        security_lvl = 2
-    else:
-        security_lvl = 3
-
+    security_lvl = classify_security_lvl(score)
     response = {
         'errors': errors,
         'improvements': improvements,
-        'security_lvl': security_lvl
+        'security_lvl': security_lvl,
+        'security_score': score
     }
     return response
+
+
+def classify_security_lvl(score):
+    if score <= 2:
+        return 1
+    elif score <= 4:
+        return 2
+    else:
+        return  3

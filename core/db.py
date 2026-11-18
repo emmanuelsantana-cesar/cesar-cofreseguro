@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import pandas as pd
 
 class DB:
     def __init__(self, root_path: Path):
@@ -58,6 +58,16 @@ class Table:
 
         with open(self.file_path, 'w', encoding='utf-8-sig') as f:
             f.writelines(header + rows)
+
+    def to_dict(self):
+        return {
+            col:[row[idx] for row in self.rows]
+            for idx, col
+            in enumerate(self.columns)
+        }
+
+    def to_pdf(self):
+        return pd.DataFrame(self.to_dict())
 
 
 

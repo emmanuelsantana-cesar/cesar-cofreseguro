@@ -1,11 +1,13 @@
 from pathlib import Path
 from core.db import DB
 from core.menu import render_options_view, get_actions
+from core.log import logger
 
 root = Path(r'data')
 db = DB(root_path=root)
 
 if __name__ == "__main__":
+    logger.info("Sessão iniciada")
     while True:
         actions = get_actions()
         valid_actions = [f'{key}' for key in actions.keys()]
@@ -20,11 +22,13 @@ if __name__ == "__main__":
             
 
         if option_key == '0':
+            logger.info("Sessão encerrada")
             print('Encerrando...')
             break
 
         else:
             aciton_func = actions[int(option_key)]['func']
             aciton_func(db)
+
 
 
