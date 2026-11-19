@@ -10,7 +10,10 @@ def security_report(db):
     há quanto tempo cada uma não é alterada.
     """
     
-    logger.info("Execução de Relatório de Segurança")
+    logger.info(
+        "Execução de Relatório de Segurança",
+        extra={"service": "Auditoria"}
+    )
     
     df_categorias = db.categorias.to_pdf().reset_index(names='categoria').astype(str)
     df_senhas = db.senhas.to_pdf()

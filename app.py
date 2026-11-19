@@ -7,7 +7,10 @@ root = Path(r'data')
 db = DB(root_path=root)
 
 if __name__ == "__main__":
-    logger.info("Sessão iniciada")
+    logger.info(
+        "Sessão iniciada",
+        extra={"service": "App"}
+    )
     while True:
         actions = get_actions()
         valid_actions = [f'{key}' for key in actions.keys()]
@@ -22,7 +25,10 @@ if __name__ == "__main__":
             
 
         if option_key == '0':
-            logger.info("Sessão encerrada")
+            logger.info(
+                "Sessão encerrada",
+                extra={"service": "App"}
+            )
             print('Encerrando...')
             break
 
