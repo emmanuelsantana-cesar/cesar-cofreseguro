@@ -25,17 +25,7 @@ class Table:
         self._load_table()
 
     def __repr__(self):
-        output = ''
-        for col in self.columns:
-            output += f'{col:{self.repr_with}}'
-
-        output += '\n'
-        for row in self.rows:
-            for value in row:
-                output += f'{value[:self.repr_with-3]:{self.repr_with}}'
-            output += '\n'
-
-        return output
+        return self.to_str()
 
     def __getitem__(self, key):
         return self.rows[key]
@@ -58,6 +48,19 @@ class Table:
 
         with open(self.file_path, 'w', encoding='utf-8-sig') as f:
             f.writelines(header + rows)
+
+    def to_str(self):
+        output = ''
+        for col in self.columns:
+            output += f'{col:{self.repr_with}}'
+
+        output += '\n'
+        for row in self.rows:
+            for value in row:
+                output += f'{value[:self.repr_with-3]:{self.repr_with}}'
+            output += '\n'
+
+        return output
 
     def to_dict(self):
         return {

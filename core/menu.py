@@ -1,5 +1,6 @@
 from core.crud import create, read, update, delete, create_category
 from ext.auditoria import security_report
+from ext.ai_agents import talk_to_agent
 import sys
 
 def get_actions():
@@ -25,8 +26,12 @@ def get_actions():
             'func': create_category
         },
         6: {
-            'name': '6 - Relatório de Segurança ',
+            'name': '6 - Relatório de Segurança',
             'func': security_report
+        },
+        7: {
+            'name': '7 - Agente de IA Groq',
+            'func': talk_to_agent
         },
         0: {
             'name': '0 - Sair',

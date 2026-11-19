@@ -2,7 +2,10 @@ from datetime import date
 from core.log import logger
 
 def create(db):
-    logger.info("Execução de Create")
+    logger.info(
+        "Execução de Create",
+        extra={"service": "Create"}
+    )
     while True:
         servico = input('Digite o nome do serviço ou SAIR para retornar: ')
         if servico.lower() == 'sair':
@@ -42,13 +45,20 @@ def create(db):
     db.senhas.rows.append(row)
     db.senhas.commit()
     print('Operação concluída com sucesso!')
-    logger.info("Create executado com sucesso!")
+    logger.info(
+        "Create executado com sucesso!",
+        extra={"service":  f'Serviço:{row[0]} Usuário:{row[1]}'}
+    )
+        
         
 
 
 
 def read(db):
-    logger.info("Execução de Read")
+    logger.info(
+        "Execução de Read",
+        extra={"service": "Read"}
+    )
     servicos = sorted(set([row[0] for row in db.senhas.rows]))
     p = "\nQual servico deseja consultar? \n"
     p += "\n".join([f'{idx}-{servico}' for idx, servico in enumerate(servicos)])
@@ -70,7 +80,11 @@ def read(db):
                 value = value[:2] + '*******'
             print(f'{col+':':15} {value:30}')
         print('')
-    logger.info("Read executado com sucesso!")
+    logger.info(
+        "Read executado com sucesso!",
+        extra={"service":  str(servicos[int(id_servico)])}
+    )
+
 
     while True:
         reveal = input('Deseja revelar as senhas? 1-Sim 2-Não\n')
@@ -83,13 +97,19 @@ def read(db):
             for col, value in zip(db.senhas.columns, row):
                 print(f'{col+':':15} {value:30}')
             print('')
-        logger.info("Senhas reveladas")
+        logger.info(
+            "Senhas reveladas",
+            extra={"service":  str(servicos[int(id_servico)])}
+        )
 
 
 
 
 def create_category(db):
-    logger.info("Execução de Criar Nova Categoria")
+    logger.info(
+        "Execução de Criar Nova Categoria",
+        extra={"service": "Categorias"}
+    )
     try:
         name_col = [row[0] for row in db.categorias.rows]
         while True:
@@ -119,15 +139,21 @@ def create_category(db):
         db.categorias.rows.append(row)
         db.categorias.commit()
         print('Operação concluída com sucesso!')
-        logger.info("Criação de Categoria concluída com sucesso!")
+        logger.info(
+            "Criação de Categoria concluída com sucesso!",
+            extra={"service":  f"Categoria {row[0]}"}
+        )
     except (ValueError, TypeError) as error:
         print(f"Erro ao executar a operação: {error}")
 
 
 
 def update(db):
-    logger.info("Execução de Update")
-    p = "\nQual senha deseja modificar ou SAIR para retornar? \n"
+    logger.info(
+        "Execução de Update",
+        extra={"service": "Update"}
+    )
+    p = "\nQual serviço deseja modificar ou SAIR para retornar? \n"
     p += "\n".join([f'{idx:5} - Serviço: {row[0][:10]:10}  Usuário: {row[1][:20]:20}  Categoria: {db.categorias.rows[int(row[3])][0][:10]:10}  Observações: {row[4]:20}' for idx, row in enumerate(db.senhas.rows)])
     p += '\n'
     valid_row_ids = [f'{idx}' for idx in range(len(db.senhas.rows))]
@@ -142,10 +168,11 @@ def update(db):
         print("Valor inválido")
 
     while True:
+        valid_cols = [(idx, col) for idx, col in enumerate(db.senhas.columns) if col != 'data']
         p = '\nQual campo deseja modificar?\n' 
-        p += '\n'.join([f'{idx}-{col}' for idx, col in enumerate(db.senhas.columns)])
+        p += '\n'.join([f'{idx}-{col}' for idx, col in valid_cols])
         p += '\n'
-        valid_cols_ids = [f'{idx}' for idx in range(len(db.senhas.columns))]
+        valid_cols_ids = [f'{idx}' for idx, _ in valid_cols]
         while True:
             col_id = str(input(p))            
             if col_id in valid_cols_ids:
@@ -169,7 +196,11 @@ def update(db):
         db.senhas.commit()
         
         print('Campo atualizado com sucesso!')
-        logger.info("Update executado com sucesso!")
+        logger.info(
+            "Update executado com sucesso!",
+            # extra={"service":  str(db.senhas.rows[int(row_id)][:2])}
+            extra={"service":  f'Servico:{db.senhas.rows[int(row_id)][0]} Usuário:{db.senhas.rows[int(row_id)][1]} Campo Modificado:{db.senhas.columns[col_id]}'}
+        )
 
         while True:
             flag_repeat = input('Deseja atualizar outro campo? 1-Sim 2-Não ')
@@ -186,7 +217,10 @@ def update(db):
 
 
 def delete(db):
-    logger.info("Execução de Delete")
+    logger.info(
+        "Execução de Delete",
+        extra={"service": "Delete"}
+    )
     try:
         p = "\nQual senha deseja excluir ou SAIR para retornar? \n"
         p += "\n".join([f'{idx:5} - Serviço: {row[0][:9]:10}  Usuário: {row[1][:19]:20}  Categoria: {db.categorias.rows[int(row[3])][0]:10}  Observações: {row[4][:19]:20}' for idx, row in enumerate(db.senhas.rows)])
@@ -202,10 +236,14 @@ def delete(db):
 
             print("Valor inválido")
 
-        db.senhas.rows.pop(int(row_id))
+        service = db.senhas.rows.pop(int(row_id))
+        service.pop(2)
         db.senhas.commit()
         print('Senha deletada com sucesso!')
-        logger.info("Delete executado com sucesso!")
+        logger.info(
+            "Delete executado com sucesso",
+            extra={"service": f'Serviço:{service[0]} Usuário:{service[1]}'}
+        )
 
     except (ValueError, TypeError) as error:
             print(f"Erro ao executar a operação: {error}")
@@ -288,10 +326,19 @@ def verify_pwd_strengh(pwd:str, week_pwds):
 
 
     security_lvl = classify_security_lvl(score)
+    
+    lvl_names = {
+        1:'Fraco',
+        2:'Moderado',
+        3:'Forte',
+    }
+    security_lvl_name = lvl_names[security_lvl]
+
     response = {
         'errors': errors,
         'improvements': improvements,
         'security_lvl': security_lvl,
+        'security_lvl_name': security_lvl_name,
         'security_score': score
     }
     return response
